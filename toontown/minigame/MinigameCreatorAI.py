@@ -49,7 +49,7 @@ def createMinigame(air, playerArray, trolleyZone, minigameZone = None, previousG
         mgId = simbase.forcedMinigameId
     else:
         randomList = list(copy.copy(ToontownGlobals.MinigamePlayerMatrix[len(playerArray)]))
-        if simbase.air.useAllMinigames and len(playerArray) > 1:
+        if simbase.air.useAllMinigames and len(playerArray) > 1 and False:
             randomList = list(copy.copy(ToontownGlobals.MinigameIDs))
             for gameId in [ToontownGlobals.TravelGameId]:
                 if gameId in randomList:
@@ -59,9 +59,9 @@ def createMinigame(air, playerArray, trolleyZone, minigameZone = None, previousG
             if gameId in randomList:
                 randomList.remove(gameId)
 
-        if previousGameId != ToontownGlobals.NoPreviousGameId:
-            if randomList.count(previousGameId) != 0:
-                randomList.remove(previousGameId)
+        # if previousGameId != ToontownGlobals.NoPreviousGameId:
+        #     if randomList.count(previousGameId) != 0:
+        #         randomList.remove(previousGameId)
         randomList = removeUnreleasedMinigames(randomList, True)
         mgId = random.choice(randomList)
         if metagameRound > -1:
