@@ -15,6 +15,10 @@
       {
         "name": "Darwin Scripts",
         "path": "darwin"
+      },
+      {
+        "name": "resources",
+        "path": "resources"
       }
     ],
     "settings": {
