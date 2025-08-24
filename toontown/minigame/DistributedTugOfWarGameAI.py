@@ -68,7 +68,7 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
         self.suitJellybeanReward = math.pow(2, self.suitType - 1)
         if self.isSinglePlayer():
             self.gameType = TugOfWarGameGlobals.TOON_VS_COG
-            self.suitForceMultiplier = 0.58 + float(self.suitType) / 10.0
+            self.suitForceMultiplier = (0.58 + float(self.suitType) / 10.0) * 2.6
         else:
             randInt = random.randrange(0, 10)
             if randInt < 8:
