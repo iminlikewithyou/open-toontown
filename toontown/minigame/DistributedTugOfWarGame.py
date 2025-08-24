@@ -125,6 +125,9 @@ class DistributedTugOfWarGame(DistributedMinigame):
         self.timer = ToontownTimer()
         self.timer.posInTopRightCorner()
         self.timer.hide()
+        self.timer2 = ToontownTimer()
+        self.timer2.posBelowTopRightCorner()
+        self.timer2.hide()
         self.room = base.loader.loadModel('phase_4/models/minigames/tug_of_war_dock')
         self.room.reparentTo(base.hidden)
         ropeModel = base.loader.loadModel('phase_4/models/minigames/tug_of_war_rope')
@@ -177,6 +180,8 @@ class DistributedTugOfWarGame(DistributedMinigame):
         del self.lt
         self.timer.destroy()
         del self.timer
+        self.timer2.destroy()
+        del self.timer2
         self.room.removeNode()
         del self.room
         self.sky.removeNode()
@@ -809,6 +814,8 @@ class DistributedTugOfWarGame(DistributedMinigame):
 
         self.timer.stop()
         self.timer.hide()
+        self.timer2.stop()
+        self.timer2.hide()
         taskMgr.remove(self.taskName('tug-timeout'))
 
     def enterGameDone(self):
@@ -906,6 +913,8 @@ class DistributedTugOfWarGame(DistributedMinigame):
 
             self.idealRate = self.targetRateList[self.nextRateIndex][1]
             self.idealForce = self.advantage * (4 + 0.4 * self.idealRate)
+            self.timer2.setTime(self.targetRateList[self.nextRateIndex][0])
+            self.timer2.countdown(self.targetRateList[self.nextRateIndex][0])
             taskMgr.doMethodLater(self.targetRateList[self.nextRateIndex][0], self.__updateIdealRateTask, self.taskName('targetRateTimer'))
 
         return task.done
@@ -927,6 +936,9 @@ class DistributedTugOfWarGame(DistributedMinigame):
             self.timer.show()
             self.timer.setTime(TugOfWarGameGlobals.GAME_DURATION)
             self.timer.countdown(TugOfWarGameGlobals.GAME_DURATION, self.__gameTimerExpired)
+            self.timer2.show()
+            self.timer2.setTime(self.targetRateList[self.nextRateIndex][0])
+            self.timer2.countdown(self.targetRateList[self.nextRateIndex][0])
 
         def enableKeys(self = self):
 
