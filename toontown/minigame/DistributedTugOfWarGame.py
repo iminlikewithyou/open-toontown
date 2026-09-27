@@ -1103,7 +1103,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
             index = float(self.currentForce) / self.idealForce
             bonus = 0.0
             if index > 1:
-                bonus = max(1, index - 1)
+                bonus = index - 1
                 index = 1
 
             color = (0,
