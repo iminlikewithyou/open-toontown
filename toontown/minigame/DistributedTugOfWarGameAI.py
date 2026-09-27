@@ -186,24 +186,40 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
         self.notify.debug('enterWaitForResults')
 
     def calculateOffsets(self):
-        f = [0, 0]
-        for i in [0, 1]:
-            for x in list(self.forceDict[i].values()):
-                f[i] += x
+        # Calculate the force totals
+        teamForceTotals = [0, 0]
+        for sideIndex in [0, 1]:
+            for x in list(self.forceDict[sideIndex].values()):
+                teamForceTotals[sideIndex] += x
 
+        # In toon vs cog, the force total of the right side is the cog's current force
         if self.gameType == TugOfWarGameGlobals.TOON_VS_COG:
-            f[1] += self.curSuitForce
-        deltaF = f[1] - f[0]
-        deltaX = deltaF * self.kMovement
+            teamForceTotals[1] += self.curSuitForce
+        
+        forceDeltaTowardsRight = teamForceTotals[1] - teamForceTotals[0]
+        
+        # kMovement is an arbitrary number, 0.04 in toon vs toon and 0.02 in toon vs cog
+        deltaX = forceDeltaTowardsRight * self.kMovement
+        
+        # The toons who are pulling won't step back as much
+        # But will pull the other side at the same factor
+        # (So the rope will get shorter by this factor)
+        pullingShorteningFactor = 2
+        
         for avId in self.avIdList:
+            # Each player is offset by this delta??? Yeah
             offset = deltaX
             if self.side[avId] == 0:
+                # On the left side, if the deltaX is going towards them (pulling)
                 if deltaX < 0:
-                    offset = deltaX / 2.0
+                    offset = deltaX / pullingShorteningFactor
             elif deltaX > 0:
-                offset = deltaX / 2.0
+                # On the right side, if the deltaX is going towards them (pulling)
+                offset = deltaX / pullingShorteningFactor
+            # Offset the player
             self.offsetDict[avId] += offset
 
+        # Move the suit, who isn't a player
         if deltaX < 0:
             self.suitOffset += deltaX
         else:
@@ -217,6 +233,11 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
         self.keyRateDict[avId] = keyRate
         self.forceDict[self.side[avId]][avId] = force
         self.sendUpdate('remoteKeyRateUpdate', [avId, self.keyRateDict[avId]])
+        # This code seems to be fixed in TTR?
+        # It looks like it was meant to only continue the game when everyone has reported their force for that frame
+        # This makes sense because when you hold the tab in TTR, the tug of war game pauses for everyone else
+        # (at least in a 1v1)
+        # But this isn't doing that correctly in TTO
         self.howManyReported += 1
         if self.howManyReported == self.numPlayers:
             self.howManyReported = 0
